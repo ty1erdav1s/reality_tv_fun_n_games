@@ -6,31 +6,78 @@
 <title>The Veto Royale</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Orbitron:wght@500;700;800&display=swap" rel="stylesheet" />
 <style>
 :root{
-  --bg:#080b16;--bg-2:#0c1120;--surface:#131a2e;--surface-2:#1a2340;--line:#25304f;
-  --text:#eaf0ff;--muted:#8291b6;--accent:#2de1fc;--accent-dim:#155a6b;
-  --gold:#ffc043;--danger:#ff3b6b;--evicted:#39456b;--good:#57e08a;
-  --font-display:'Oswald',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;--radius:14px;
+  --bg:#0d0221;--bg-2:#170a30;--surface:#1f1140;--surface-2:#2a1a52;--line:#3d2568;
+  --text:#fdf1e0;--muted:#a996c9;--accent:#ff7a1a;--accent-dim:#7a3a10;
+  --gold:#ffcc33;--danger:#ff3864;--evicted:#4a3b6b;--good:#2de8c9;
+  --font-display:'Oswald',system-ui,sans-serif;--font-body:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;--font-time:'Orbitron',var(--font-mono);--radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{background:radial-gradient(1200px 600px at 50% -10%,#10203f 0%,transparent 60%),var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:80px;overflow-x:hidden}
+body{background:radial-gradient(1200px 600px at 50% -10%,#3a1568 0%,transparent 60%),var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:80px;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.014) 0 1px,transparent 1px 3px);mix-blend-mode:overlay;opacity:.5}
+.shell{position:relative}
+.sidenav{position:fixed;top:0;left:0;height:100vh;width:212px;background:var(--surface);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:6px;z-index:40;overflow-y:auto;transition:width .22s ease,transform .22s ease}
+.shell.collapsed .sidenav{width:60px}
+.shell.collapsed .navlink-label,.shell.collapsed .brandmini-label{display:none}
+.shell.collapsed .navlink-row{justify-content:center}
+.shell.collapsed .infobtn{display:none}
+.sidenav-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px;padding:0 2px}
+.brandmini{display:flex;align-items:center;gap:8px;overflow:hidden;min-width:0}
+.brandmini svg{width:26px;height:26px;flex:0 0 auto}
+.brandmini-label{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.collapseBtn{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:var(--bg-2);color:var(--muted);cursor:pointer;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:.68rem;transition:.18s}
+.collapseBtn:hover{border-color:var(--accent-dim);color:var(--accent)}
+.navlink-row{position:relative;display:flex;align-items:center;gap:4px}
+.navlink{flex:1;display:flex;align-items:center;gap:10px;background:none;border:1px solid transparent;border-radius:10px;padding:10px;color:var(--text);font-family:var(--font-mono);font-size:.8rem;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;min-width:0}
+.navlink:hover{background:var(--surface-2);border-color:var(--line)}
+.navlink-ic{flex:0 0 auto;width:16px;text-align:center;color:var(--accent)}
+.navlink-label{overflow:hidden;text-overflow:ellipsis}
+.sidenav .infopop{left:calc(100% + 10px);bottom:auto;top:0}
+.navToggle{display:none;position:fixed;bottom:18px;right:18px;z-index:41;width:46px;height:46px;border-radius:50%;border:1px solid var(--accent-dim);background:var(--accent);color:#04121a;font-size:1.1rem;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.navBackdrop{display:none;position:fixed;inset:0;background:rgba(4,7,14,.6);z-index:39}
+.navBackdrop.show{display:block}
+.content{margin-left:212px;transition:margin-left .22s ease}
+.shell.collapsed .content{margin-left:60px}
+@media (max-width:860px){
+  .sidenav{width:230px !important;transform:translateX(-100%);box-shadow:0 0 30px rgba(0,0,0,.5)}
+  .sidenav.mobile-open{transform:translateX(0)}
+  .collapseBtn{display:none}
+  .content,.shell.collapsed .content{margin-left:0}
+  .navToggle{display:flex}
+  .sidenav .infopop{left:0;right:auto;top:calc(100% + 6px);bottom:auto;width:calc(100% - 20px)}
+  /* the desktop icon-rail "collapsed" state shouldn't affect the mobile drawer — always show full labels there */
+  .sidenav .navlink-label,.sidenav .brandmini-label{display:inline !important}
+  .sidenav .navlink-row{justify-content:flex-start !important}
+  .sidenav .infobtn{display:inline-flex !important}
+}
 .wrap{max-width:940px;margin:0 auto;padding:0 18px;position:relative;z-index:2}
 header{padding:26px 0 14px}
 .brandrow{display:flex;align-items:center;gap:14px}
-.eye{width:46px;height:46px;flex:0 0 auto;filter:drop-shadow(0 0 10px var(--accent-dim))}
+.eyewrap{position:relative;width:46px;height:46px;flex:0 0 auto}
+.eye{position:relative;z-index:2;width:46px;height:46px;filter:drop-shadow(0 0 10px var(--accent-dim))}
 .eye .iris{animation:pulse 3.6s ease-in-out infinite;transform-origin:center}
+.vortex{position:absolute;z-index:1;inset:-15px;width:76px;height:76px;animation:spin 16s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:.85}50%{opacity:.35}}
-.titles h1{font-family:var(--font-display);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(1.5rem,5.5vw,2.35rem);line-height:1}
-.titles h1 .thin{font-weight:400;color:var(--accent)}
+.titles h1{font-family:var(--font-display);font-weight:700;font-style:italic;letter-spacing:.1em;text-transform:uppercase;font-size:clamp(1.5rem,5.5vw,2.35rem);line-height:1;transform:skewX(-3deg)}
+.titles h1 .thin{font-weight:600;font-style:normal;background:linear-gradient(90deg,var(--accent),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 6px var(--accent-dim))}
 .sub{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.05em;margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#seasonline{font-family:var(--font-time);letter-spacing:.06em;background:rgba(0,0,0,.35);padding:3px 9px;border-radius:4px;border:1px solid var(--line)}
 .livepill{display:inline-flex;align-items:center;gap:6px;color:var(--accent);border:1px solid var(--accent-dim);border-radius:100px;padding:2px 9px;font-weight:600}
-.livedot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.6s infinite}
-.rules{margin-top:14px;font-size:.82rem;color:var(--muted);border-left:2px solid var(--accent-dim);padding:2px 0 2px 12px}
-.rules b{color:var(--text);font-weight:600}
+.bolt{width:10px;height:10px;fill:var(--accent);filter:drop-shadow(0 0 4px var(--accent));animation:flicker 1.8s infinite}
+@keyframes flicker{0%,19%,21%,23%,54%,56%,100%{opacity:1}20%,22%,55%{opacity:.3}}
+.popwrap{position:relative;display:inline-flex}
+.helpBtn{width:22px;height:22px;border-radius:50%;border:1px solid var(--accent-dim);background:var(--surface);color:var(--accent);font-family:var(--font-mono);font-size:.72rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;line-height:1;transition:.18s}
+.helpBtn:hover{background:var(--surface-2);border-color:var(--accent)}
+.infopop{position:absolute;left:0;bottom:calc(100% + 10px);width:240px;max-width:60vw;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:.78rem;line-height:1.45;color:var(--text);box-shadow:0 12px 28px rgba(0,0,0,.45);opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .15s,transform .15s;z-index:30}
+.infopop b{color:var(--text);font-weight:600}
+.infopop.show{opacity:1;visibility:visible;transform:translateY(0)}
+.infopop.below{bottom:auto;top:calc(100% + 10px)}
+.infobtn{width:18px;height:18px;border-radius:50%;border:1px solid var(--accent-dim);background:var(--bg-2);color:var(--accent);font-family:var(--font-mono);font-style:italic;font-size:.62rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;line-height:1;flex:0 0 auto}
+.infobtn:hover{background:var(--surface-2);border-color:var(--accent)}
 .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
 .btn{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.04em;padding:9px 16px;border-radius:100px;border:1px solid var(--accent-dim);background:var(--surface);color:var(--accent);cursor:pointer;transition:.18s}
 .btn:hover{background:var(--surface-2);border-color:var(--accent)}
@@ -45,11 +92,11 @@ section{margin-top:30px}
 .hg .mono{font-family:var(--font-display);font-weight:600;font-size:1.9rem;letter-spacing:.04em;color:var(--accent);text-shadow:0 0 14px var(--accent-dim);line-height:1}
 .hg .nm{font-size:.72rem;font-weight:600;margin-top:8px;line-height:1.15}
 .hg .occ{font-size:.6rem;color:var(--muted);margin-top:2px}
-.hg .glow{position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 22px rgba(45,225,252,.10);pointer-events:none}
-.hg.in:hover{transform:translateY(-3px);box-shadow:0 10px 24px -12px rgba(45,225,252,.5)}
+.hg .glow{position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 22px rgba(255,122,26,.10);pointer-events:none}
+.hg.in:hover{transform:translateY(-3px);box-shadow:0 10px 24px -12px rgba(255,122,26,.5)}
 .hg.out{filter:grayscale(1) brightness(.55)}
 .hg.out .mono{color:var(--muted);text-shadow:none}
-.hg .placard{position:absolute;top:0;left:0;right:0;background:var(--danger);color:#fff;font-family:var(--font-display);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:.62rem;padding:3px 0}
+.hg .placard{position:absolute;top:0;left:0;right:0;background:repeating-linear-gradient(45deg,var(--gold) 0 8px,#1a1300 8px 16px);color:#1a1300;font-family:var(--font-display);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.62rem;padding:3px 0}
 .hg .place{position:absolute;bottom:6px;font-family:var(--font-mono);font-size:.66rem;color:#fff;background:rgba(0,0,0,.45);padding:1px 7px;border-radius:100px}
 .board{display:flex;flex-direction:column;gap:8px}
 .row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:11px 14px;cursor:pointer;transition:border-color .2s,background .2s}
@@ -63,7 +110,7 @@ section{margin-top:30px}
 .tag{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:100px;border:1px solid}
 .tag.hoh{color:var(--gold);border-color:#5a4a12;background:#241d06}
 .tag.otb{color:var(--danger);border-color:#4a1526;background:#230810}
-.tag.bot{color:var(--accent);border-color:var(--accent-dim);background:#062028}
+.tag.bot{color:var(--accent);border-color:var(--accent-dim);background:#2a1608}
 .probwrap{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.7rem;color:var(--muted)}
 .bar{height:6px;width:120px;max-width:34vw;background:var(--bg-2);border-radius:100px;overflow:hidden;border:1px solid var(--line)}
 .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent));border-radius:100px;transition:width 1s cubic-bezier(.2,.8,.2,1)}
@@ -128,30 +175,73 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="shell" id="shell">
+  <aside class="sidenav" id="sidenav">
+    <div class="sidenav-head">
+      <div class="brandmini">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="32" rx="30" ry="18" fill="none" stroke="var(--accent)" stroke-width="3"/><circle cx="32" cy="32" r="10" fill="var(--accent)"/><circle cx="32" cy="32" r="4.5" fill="var(--bg)"/></svg>
+        <span class="brandmini-label">Jump to</span>
+      </div>
+      <button class="collapseBtn" id="collapseBtn" aria-label="Collapse navigation">«</button>
+    </div>
+    <div class="navlink-row">
+      <button class="navlink" data-target="wallSection"><span class="navlink-ic">▦</span><span class="navlink-label">Memory Wall</span></button>
+      <button class="infobtn" data-pop="popWall" aria-label="About the Memory Wall">i</button>
+      <div class="infopop" id="popWall">The full cast — grayed out with a placement number once evicted, full color while they're still in the house.</div>
+    </div>
+    <div class="navlink-row">
+      <button class="navlink" data-target="standingsSection"><span class="navlink-ic">◷</span><span class="navlink-label">Standings</span></button>
+      <button class="infobtn" data-pop="popStandings" aria-label="About Standings">i</button>
+      <div class="infopop" id="popStandings">Score = how far each guess lands from reality — lowest wins. Win probabilities come from thousands of simulated eviction orders.</div>
+    </div>
+    <div class="navlink-row">
+      <button class="navlink" data-target="closeSection"><span class="navlink-ic">◎</span><span class="navlink-label">Am I Close?</span></button>
+      <button class="infobtn" data-pop="popClose" aria-label="About Am I Close">i</button>
+      <div class="infopop" id="popClose">Pick anyone to see which calls already hit, what's still live, and their single biggest liability left on the board.</div>
+    </div>
+  </aside>
+  <button class="navToggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+  <div class="navBackdrop" id="navBackdrop"></div>
+  <main class="content" id="content">
+  <div class="wrap">
   <header>
     <div class="brandrow">
-      <svg class="eye" viewBox="0 0 64 64" aria-hidden="true">
-        <ellipse cx="32" cy="32" rx="30" ry="18" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
-        <circle class="iris" cx="32" cy="32" r="10" fill="var(--accent)"/>
-        <circle cx="32" cy="32" r="4.5" fill="var(--bg)"/>
-      </svg>
+      <div class="eyewrap">
+        <svg class="vortex" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 7" opacity=".55"/>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3 6" opacity=".5"/>
+          <circle cx="50" cy="50" r="24" fill="none" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="2 5" opacity=".45"/>
+        </svg>
+        <svg class="eye" viewBox="0 0 64 64" aria-hidden="true">
+          <ellipse cx="32" cy="32" rx="30" ry="18" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+          <circle class="iris" cx="32" cy="32" r="10" fill="var(--accent)"/>
+          <circle cx="32" cy="32" r="4.5" fill="var(--bg)"/>
+        </svg>
+      </div>
       <div class="titles">
         <h1 id="title">The Veto <span class="thin">Royale</span></h1>
-        <div class="sub"><span class="livepill"><span class="livedot"></span>LIVE</span><span id="seasonline">LOADING…</span></div>
+        <div class="sub">
+          <span class="livepill"><svg class="bolt" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>LIVE</span>
+          <span id="seasonline">LOADING…</span>
+          <span class="popwrap">
+            <button class="helpBtn" data-pop="popRules" aria-label="How scoring works">?</button>
+            <div class="infopop below" id="popRules">Rank the cast 1&ndash;N by predicted finish. Score = how far each guess lands from reality. <b>Lowest score wins.</b> Nail a placement and you subtract a point; call the winner and you subtract three.</div>
+          </span>
+        </div>
       </div>
     </div>
-    <div class="rules">Rank the cast 1&ndash;N by predicted finish. Score = how far each guess lands from reality. <b>Lowest score wins.</b> Nail a placement and you subtract a point; call the winner and you subtract three.</div>
     <div class="actions">
       <button class="btn primary" id="btnSubmit">Submit / edit my picks</button>
       <button class="btn ghost" id="btnAdmin">Admin</button>
     </div>
   </header>
 
-  <section><div class="eyebrow">The Memory Wall</div><div class="wall" id="wall"></div></section>
-  <section><div class="eyebrow">Standings &amp; Win Probability</div><div class="board" id="board"></div><div class="hint" id="mc-note"></div></section>
-  <section><div class="eyebrow">Am I Close?</div><div class="picker" id="picker"></div><div class="card" id="detail"></div></section>
+  <section id="wallSection"><div class="eyebrow">The Memory Wall</div><div class="wall" id="wall"></div></section>
+  <section id="standingsSection"><div class="eyebrow">Standings &amp; Win Probability</div><div class="board" id="board"></div></section>
+  <section id="closeSection"><div class="eyebrow">Am I Close?</div><div class="picker" id="picker"></div><div class="card" id="detail"></div></section>
   <footer id="footer"></footer>
+  </div>
+  </main>
 </div>
 
 <!-- SUBMIT PANEL -->
@@ -214,7 +304,7 @@ const API_URL = "";
 /* ---- demo fallback (same data as the static viewer) ---- */
 const DEMO = {
   season:{seasonId:"bb28",show:"big-brother",title:"The Veto Royale — Season 28",episode:2,castSize:17,locked:false,
-    theme:{name:"Big Brother"}},
+    theme:{name:"Time Travel"}},
   cast:[
     {id:1,name:"Ashley Trail",occ:"Bartender",actual:17},{id:2,name:"Barrett Pfeiffer",occ:"Jumbotron Engineer",actual:null},
     {id:3,name:"Chuk Anyanwu",occ:"Supply Chain Analyst",actual:null},{id:4,name:"Drew Campbell",occ:"Dental Assistant",actual:null},
@@ -332,7 +422,7 @@ function renderAll(){
   // standings
   if(standings.length===0){
     document.getElementById("board").innerHTML=`<div class="card">No picks submitted yet. Tap <b>Submit / edit my picks</b> to be first on the wall.</div>`;
-    document.getElementById("mc-note").textContent="";
+    document.getElementById("popStandings").textContent="No picks yet — standings will appear once players submit.";
     document.getElementById("picker").innerHTML=""; document.getElementById("detail").innerHTML="";
   } else {
     document.getElementById("board").innerHTML = standings.map(s=>{
@@ -347,8 +437,8 @@ function renderAll(){
         <div class="score"><div class="val">${s.total>0?'+':''}${s.total}</div><div class="lbl">score</div></div></div>`;
     }).join("");
     requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".bar span").forEach(b=>b.style.width=b.dataset.w+"%")));
-    document.getElementById("mc-note").textContent =
-      `Win probabilities from ${N_SIMS.toLocaleString()} simulated eviction orders of the ${unresolved().length} still in the game.`;
+    document.getElementById("popStandings").textContent =
+      `Score = how far each guess lands from reality — lowest wins. Win probabilities come from ${N_SIMS.toLocaleString()} simulated eviction orders of the ${unresolved().length} still in the game.`;
     // am i close
     document.getElementById("picker").innerHTML = MODEL.players.map(p=>`<button class="chip" data-player="${p.name}">${p.name}</button>`).join("");
     renderDetail(standings[0].pl.name);
@@ -396,7 +486,8 @@ async function boot(){
   document.getElementById("footer").innerHTML =
     `THE VETO ROYALE · a fan prediction pool · lower score wins<br>`+
     (LIVE?`Live from your season sheet · players submit, standings update automatically.`
-        :`Preview on demo data — paste your Apps Script URL into <b>API_URL</b> to go live.`);
+        :`Preview on demo data — paste your Apps Script URL into <b>API_URL</b> to go live.`)+
+    `<br>This season's a time warp — pick wisely before the flux capacitor fries.`;
   wirePanels();
 }
 
@@ -405,6 +496,47 @@ function openOverlay(id){document.getElementById(id).classList.add("show");}
 function closeOverlay(el){el.classList.remove("show");}
 document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",e=>closeOverlay(e.target.closest(".overlay"))));
 document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)closeOverlay(o);}));
+
+/* ----- jump nav + info popovers ----- */
+function closeAllPops(except){
+  document.querySelectorAll(".infopop.show").forEach(p=>{ if(p!==except) p.classList.remove("show"); });
+}
+document.querySelectorAll("[data-pop]").forEach(btn=>{
+  btn.addEventListener("click", e=>{
+    e.stopPropagation();
+    const pop=document.getElementById(btn.dataset.pop);
+    const isShown=pop.classList.contains("show");
+    closeAllPops();
+    if(!isShown) pop.classList.add("show");
+  });
+});
+document.querySelectorAll(".infopop").forEach(p=>p.addEventListener("click",e=>e.stopPropagation()));
+document.addEventListener("click",()=>closeAllPops());
+
+/* ----- sidebar: collapse rail (desktop) + off-canvas drawer (mobile) ----- */
+const shellEl=document.getElementById("shell"), sidenavEl=document.getElementById("sidenav"),
+      collapseBtn=document.getElementById("collapseBtn"), navToggle=document.getElementById("navToggle"),
+      navBackdrop=document.getElementById("navBackdrop");
+function setCollapsed(v){
+  shellEl.classList.toggle("collapsed", v);
+  collapseBtn.textContent = v?"»":"«";
+  localStorage.setItem("vr_nav_collapsed", v?"1":"0");
+}
+setCollapsed(localStorage.getItem("vr_nav_collapsed")==="1");
+collapseBtn.addEventListener("click", ()=>setCollapsed(!shellEl.classList.contains("collapsed")));
+function openMobileNav(){ sidenavEl.classList.add("mobile-open"); navBackdrop.classList.add("show"); }
+function closeMobileNav(){ sidenavEl.classList.remove("mobile-open"); navBackdrop.classList.remove("show"); }
+navToggle.addEventListener("click", ()=>{
+  sidenavEl.classList.contains("mobile-open") ? closeMobileNav() : openMobileNav();
+});
+navBackdrop.addEventListener("click", closeMobileNav);
+document.querySelectorAll(".navlink").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const target=document.getElementById(btn.dataset.target);
+    if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
+    closeMobileNav();
+  });
+});
 
 function needLive(){ if(!LIVE){ alert("Connect the backend first: paste your Apps Script URL into API_URL, then redeploy."); return false;} return true; }
 

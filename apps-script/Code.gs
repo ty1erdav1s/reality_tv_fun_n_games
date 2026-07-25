@@ -255,9 +255,9 @@ function setup(){
   Object.keys(TABS).forEach(t => { const sh = tab_(t); if (sh.getLastRow() === 0) sh.appendRow(TABS[t]); });
 
   const theme = JSON.stringify({
-    name:'Big Brother', bg:'#080b16', surface:'#131a2e', line:'#25304f',
-    text:'#eaf0ff', muted:'#8291b6', accent:'#2de1fc', gold:'#ffc043',
-    danger:'#ff3b6b', evicted:'#39456b', good:'#57e08a'
+    name:'Time Travel', bg:'#0d0221', surface:'#1f1140', line:'#3d2568',
+    text:'#fdf1e0', muted:'#a996c9', accent:'#ff7a1a', gold:'#ffcc33',
+    danger:'#ff3864', evicted:'#4a3b6b', good:'#2de8c9'
   });
 
   seedTab_('seasons', [['bb28','big-brother','The Veto Royale — Season 28', 2, 17, false, theme]]);
