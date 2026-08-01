@@ -452,7 +452,7 @@ function renderDetail(name){
   for(const c of MODEL.cast){
     const guess=pl.ranks[c.id];
     if(c.actual!==null) res.push({c,guess,pts:piece(guess,c.actual)});
-    else{ const opts=rp.map(p=>piece(guess,p)); live.push({c,guess,best:Math.min(...opts),worst:Math.max(...opts)}); }
+    else{ const opts=rp.map(p=>piece(guess,p)); const nextOut=Math.max(...rp); live.push({c,guess,best:Math.min(...opts),worst:piece(guess,nextOut)}); }
   }
   res.sort((a,b)=>a.c.actual-b.c.actual); live.sort((a,b)=>b.worst-a.worst);
   const worst=live[0]; const cls=v=>v>0?'plus':v<0?'minus':'zero'; const fmt=v=>(v>0?'+':'')+v;
